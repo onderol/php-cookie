@@ -3,52 +3,44 @@
 /**
  * COOKIE SESSION
  */
-class cookie_session
+class CookieSession
 {
-    public $cookie_name = null;
-    public $cookie_value = null;
+    public $cookieName = null;
+    public $cookieValue = null;
     public $time = null;
 
     // CREATION
-    function __construct($name, $value, $time)
+    function __construct($name, $value = false, $time = false)
     {
         // INSTATIATION OF THE COOKIE
-        $this->cookie_name = $name;
-        $this->cookie_value = $value;
-        $this->time = $time;
+        $this->cookieName = $name;
+        $this->cookieValue = $value;
+        $this->time = ($time ? $time : strtotime("+1 year"));
         # code...
     }
 
     #LAUNCH
-    public function start()
+    public function set()
     {
         // CREAT THE COOKIE
-        setcookie($this->cookie_name, $this->cookie_value, $this->time);
+        setcookie($this->cookieName, $this->cookieValue, $this->time, '/');
         return 1;
         # code...
     }
 
     #UPDATE THE COOKIE SESSION
-    public function update($time)
+    public function update($value, $time = false)
     {
-        // CHECKING IF THE COOKIE ALREADY EXIST
-        if (isset($_COOKIE[$this->cookie_name])) {
-            $this->cookie_value = $_COOKIE[$this->cookie_name];
-            $this->time = $time;
-            $this->start();
-            return  1;
-            # code...
-        } else {
-            return "message d'erreur";
-        }
-
-        # code...
+		$this->cookieValue = $value;
+		$this->time = ($time ? $time : strtotime("+1 year"));
+		$this->set();
+		return 1;
     }
 
     #READ COOKIE VALUE
-    public function get_value()
+    public function read()
     {
-        return $this->cookie_value;
+        return (isset($_COOKIE[$this->cookieName]) ? $_COOKIE[$this->cookieName] : false);
         # code...
     }
 
@@ -56,12 +48,11 @@ class cookie_session
     public function stop()
     {
         // Suppression du cookie 
-        setcookie($this->cookie_name);
+		setcookie($this->cookieName, '', 1, '/');
         // Suppression de la valeur du tableau $_COOKIE
-        unset($_COOKIE[$this->cookie_name]);
+        unset($_COOKIE[$this->cookieName]);
         // redirection
         return 1;
-
         # code...
     }
 }
